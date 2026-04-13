@@ -1,0 +1,339 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TexasSolver</title>
+  <link rel="stylesheet" href="./assets/css/main.css" />
+</head>
+<body>
+<div class="win">
+  <div class="title">基于CFR的德州扑克求解器</div>
+  <div class="menu"><span>求解工作</span><span>策略浏览</span><span>参数配置</span></div>
+  <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
+
+  <div class="main">
+    <section class="left">
+      <div class="hero">
+        <div class="hero-main">
+          <div class="hero-kicker">CFR Solver Workspace</div>
+          <h1 class="hero-title">从手牌范围到策略结果的完整求解工作流</h1>
+          <p class="hero-desc">先设置公共牌与双方范围，再配置下注树和求解参数。页面按真实操作顺序组织，适合快速试算、构建树和查看结果</p>
+          <div class="hero-tags">
+            <span class="tag">范围编辑</span>
+            <span class="tag">树构建</span>
+            <span class="tag">内存估算</span>
+            <span class="tag">策略浏览</span>
+            <span class="tag">EV 图表</span>
+          </div>
+          <div class="hero-actions">
+            <button class="btn primary" id="startBtn">开始求解</button>
+            <button class="btn" id="buildTreeBtn">构建树</button>
+            <button class="btn ghost" id="estimateBtn">估算内存</button>
+            <button class="btn" id="loadResultBtn">显示结果</button>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="quick-card">
+            <h4>推荐顺序</h4>
+            <p>1. 先设置公共牌与范围 2. 配置下注参数 3. 估算内存后再开始求解 4. 求解完成后查看策略和EV</p>
+          </div>
+          <div class="quick-card">
+            <h4>当前工作区</h4>
+            <p>左侧负责输入与求解配置，右侧集中显示运行状态、命令文件、日志和结果预览，减少来回滚动</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">基础参数配置</h2>
+            <p class="section-subtitle">先确定公共牌、双方范围和基础参数，这是后续构建博弈树的输入基础。</p>
+          </div>
+        </div>
+
+        <div class="section-grid-two">
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">IP 范围</h3>
+              <span class="panel-note">点击网格或直接编辑文本</span>
+            </div>
+            <div class="gridwrap"><div class="matrix" id="grid1"></div></div>
+            <div class="btnrow"><button class="btn" id="btnSelectIp">选择IP</button></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">OOP 范围</h3>
+              <span class="panel-note">支持权重和文本导入</span>
+            </div>
+            <div class="gridwrap"><div class="matrix" id="grid2"></div></div>
+            <div class="btnrow"><button class="btn" id="btnSelectOop">选择OOP</button></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">牌面与范围</h3>
+            <span class="panel-note">建议先用选择器粗配，再在文本中微调</span>
+          </div>
+          <div class="range-editor">
+            <div class="range-block">
+              <div class="label">公共牌</div>
+              <textarea class="txt" id="board">Q♠,J♥,2♥</textarea>
+              <div class="compact-actions">
+                <button class="btn" id="btnSelectBoard">选择公共牌</button>
+                <span class="helper-text">格式例子：Q♠,J♥,2♥</span>
+              </div>
+            </div>
+            <div class="section-grid-two">
+              <div class="range-block">
+                <div class="label">IP 范围文本</div>
+                <textarea class="txt" id="range_ip">AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75</textarea>
+              </div>
+              <div class="range-block">
+                <div class="label">OOP 范围文本</div>
+                <textarea class="txt" id="range_oop">QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">下注树配置</h2>
+            <p class="section-subtitle">按位置和街次分别设置下注、加注、Donk 及全下选项，构建更贴近真实策略空间的博弈树</p>
+          </div>
+          <div class="compact-actions">
+            <button class="btn" id="copyIpToOopBtn">复制IP到OOP</button>
+          </div>
+        </div>
+
+        <div class="street">
+          <div class="panel item"><h4> flop IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_ip_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4> turn IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="turn_ip_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4> river IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_ip_raise" value="60 100"><div>%</div></div><label class="check"><input type="checkbox" id="river_ip_allin" checked> 允许全下</label></div>
+        </div>
+
+        <div class="street">
+          <div class="panel item"><h4> flop OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_oop_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_oop_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4> turn OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_oop_raise" value="60"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="turn_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="turn_oop_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4> river OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_oop_raise" value="60 100"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="river_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="river_oop_allin" checked> 允许全下</label></div>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+          <div class="meta-card">
+            <div class="k">底池</div>
+            <input class="small" id="pot" value="50">
+          </div>
+          <div class="meta-card">
+            <div class="k">有效筹码</div>
+            <input class="small" id="stack" value="200">
+          </div>
+          <div class="meta-card">
+            <div class="k">加注上限</div>
+            <input class="small" id="raise_limit" value="4">
+          </div>
+          <div class="meta-card">
+            <div class="k">模式</div>
+            <select class="sel" id="mode"><option value="holdem">德州扑克</option><option value="shortdeck">短牌</option></select>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label>全下阈值</label>
+            <input class="small" id="allin_threshold" value="0.67">
+          </div>
+          <div class="field">
+            <label>同构优化</label>
+            <label class="check"><input type="checkbox" id="use_iso" checked> 使用同构</label>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">求解参数与执行</h2>
+            <p class="section-subtitle">先估算内存，再运行求解。求解结束后可直接打开结果浏览器查看策略、范围和EV值</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="field-grid">
+            <div class="field">
+              <label>迭代次数</label>
+              <input class="small" id="iter" value="200">
+            </div>
+            <div class="field">
+              <label>可利用度阈值</label>
+              <input class="small" id="accuracy" value="0.5">
+            </div>
+            <div class="field">
+              <label>线程数</label>
+              <input class="small" id="threads" value="8">
+            </div>
+            <div class="field">
+              <label>日志间隔</label>
+              <input class="small" id="print_interval" value="10">
+            </div>
+            <div class="field">
+              <label>内存优化</label>
+              <select class="sel" id="use_halffloats"><option value="0">关闭</option><option value="1">3/4精度</option><option value="2">1/2精度</option></select>
+            </div>
+            <div class="field">
+              <label>导出轮次</label>
+              <input class="small" id="dump_rounds" value="2">
+            </div>
+          </div>
+          <div class="solver-toolbar">
+            <div class="helper-text">构建树用于检查配置有效性，估算内存用于预判资源消耗，开始求解后可在右侧日志区查看进度</div>
+            <div class="compact-actions">
+              <button class="btn" id="stopBtn">停止求解</button>
+              <button class="btn" id="refreshBtn">刷新状态</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="right">
+      <div class="sidebar-card">
+        <div class="sec-title">运行文件</div>
+        <div class="btnrow"><button class="btn" id="exportCmdBtn">导出当前参数</button></div>
+        <div class="filebox" id="filebox">output_result.json
+TexasSolverGui
+tmp_log.txt</div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sec-title">运行日志</div>
+        <div class="log" id="log"></div>
+        <div class="btnrow"><button class="btn" id="clearLogBtn">清空日志</button></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sec-title">结果预览</div>
+        <div class="result" id="result">结果预览将在这里显示</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="dialog-mask" id="rangeDialog">
+  <div class="dialog">
+    <div class="dialog-head">
+      <span id="dlgTitle">范围选择器</span>
+    </div>
+    <div class="dialog-body">
+      <div>
+        <div class="dlg-grid-wrap">
+          <div class="dlg-grid" id="dlgGrid"></div>
+        </div>
+        <div class="weight-row">
+          <span>权重:</span>
+          <input type="range" id="dlgWeight" min="0" max="1" step="0.001" value="1">
+          <input class="small" id="dlgWeightText" value="1" style="width:100px">
+        </div>
+        <div class="muted">点击或拖动网格设置权重；再次点击相同权重会清零</div>
+      </div>
+      <div class="dlg-right">
+        <div class="label">范围文本</div>
+        <textarea class="txt" id="dlgText"></textarea>
+        <div class="dlg-files">
+          <button class="btn" id="dlgClear">清空范围</button>
+          <button class="btn" id="dlgImport">导入范围文件</button>
+          <button class="btn" id="dlgExport">导出范围文件</button>
+          <input type="file" id="dlgFileInput" accept=".txt" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn" id="dlgCancel">取消</button>
+      <button class="btn" id="dlgConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-mask" id="boardDialog">
+  <div class="dialog" style="width:760px">
+    <div class="dialog-head">
+      <span>公用牌选择器</span>
+    </div>
+    <div class="dialog-body" style="grid-template-columns:1fr">
+      <div>
+        <div class="inline"><span>当前选择:</span><input class="txt" id="boardDlgText" readonly></div>
+        <div class="muted" style="margin-bottom:8px;">可选择 3~5 张公共牌，点击牌面切换选中状态。</div>
+        <div id="boardCardGrid" class="board-grid"></div>
+      </div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn" id="boardDlgCancel">取消</button>
+      <button class="btn" id="boardDlgConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-mask" id="resultDialog">
+  <div class="dialog result-dialog">
+    <div class="dialog-head">
+      <span>策略浏览</span>
+    </div>
+    <div class="result-body">
+      <div class="res-col">
+        <div class="res-box">
+          <div class="res-title">Game Tree</div>
+          <div class="res-tree" id="resultTree"></div>
+        </div>
+        <div class="res-box">
+          <div class="res-cards">
+            <span>Turn card:</span><select id="turnCardBox" class="sel"></select>
+            <span>River card:</span><select id="riverCardBox" class="sel"></select>
+          </div>
+        </div>
+        <div class="res-box">
+          <div class="res-title">Strategy Table</div>
+          <div class="res-matrix" id="strategyMatrix"></div>
+        </div>
+      </div>
+      <div class="res-col">
+        <div class="res-box">
+          <div class="res-title">Rough Strategy</div>
+          <div class="res-matrix" id="roughStrategyMatrix"></div>
+        </div>
+        <div class="res-box">
+          <div><b>board:</b> <span id="resultBoardLabel"></span></div>
+          <div style="margin-top:4px"><b>node:</b> <span id="resultNodeLabel">NoNodeChosen</span></div>
+        </div>
+        <div class="res-box">
+          <div class="res-buttons">
+            <button class="btn" id="modeIpBtn">IP</button>
+            <button class="btn" id="modeOopBtn">OOP</button>
+            <button class="btn" id="modeStrategyBtn">strategy</button>
+            <button class="btn" id="modeEvBtn">Ev + strategy</button>
+            <button class="btn" id="modeEvOnlyBtn">Ev</button>
+          </div>
+          <div class="res-note" id="resultModeNote" style="margin-top:6px;"></div>
+        </div>
+        <div class="res-box">
+          <textarea class="detail-area" id="resultDetail" readonly></textarea>
+        </div>
+        <div class="res-box">
+          <div class="res-title">细节视图 (3x4)</div>
+          <div id="comboGrid" class="combo-grid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn" id="resultDlgOk">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./assets/js/main.js"></script>
+</body>
+</html>
+

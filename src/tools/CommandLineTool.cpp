@@ -144,6 +144,8 @@ void CommandLineTool::processCommand(string input) {
         this->accuracy = stof(paramstr);
     }else if(command == "set_allin_threshold"){
         this->allin_threshold = stof(paramstr);
+    }else if(command == "set_raise_limit"){
+        this->raise_limit = stoi(paramstr);
     }else if(command == "set_thread_num"){
         this->thread_number = stoi(paramstr);
     }else if(command == "build_tree"){
@@ -152,6 +154,8 @@ void CommandLineTool::processCommand(string input) {
         this->max_iteration = stoi(paramstr);
     }else if(command == "set_use_isomorphism"){
         this->use_isomorphism = stoi(paramstr);
+    }else if(command == "set_use_halffloats"){
+        this->use_halffloats = stoi(paramstr);
     }else if(command == "set_print_interval"){
         this->print_interval = stoi(paramstr);
     }else if(command == "start_solve"){
@@ -167,9 +171,24 @@ void CommandLineTool::processCommand(string input) {
                 -1,
                 this->accuracy,
                 this->use_isomorphism,
-                0, // TODO: enable half float option for command line tool
+                this->use_halffloats,
                 this->thread_number
         );
+    }else if(command == "estimate_memory"){
+        string output_file = paramstr.empty() ? "estimated_memory.txt" : paramstr;
+        long long memory_float = this->ps.estimate_tree_memory(
+                QString::fromStdString(this->range_ip),
+                QString::fromStdString(this->range_oop),
+                QString::fromStdString(this->board)
+        );
+        ofstream out(output_file);
+        if(!out.fail()){
+            out << memory_float;
+            out.flush();
+            out.close();
+        }else{
+            throw runtime_error(tfm::format("cannot open estimate output file: %s", output_file));
+        }
     }else if(command == "dump_result"){
         string output_file = paramstr;
         this->ps.dump_strategy(QString::fromStdString(output_file),this->dump_rounds);

@@ -910,10 +910,12 @@ void PCfrSolver::reConvertJson(const shared_ptr<GameTreeNode>& node,json& strate
         shared_ptr<Trainable> trainable = one_node->getTrainable(deal,false);
         if(trainable != nullptr) {
             (*retval)["strategy"] = trainable->dump_strategy(false);
+            (*retval)["evs"] = trainable->dump_evs()["evs"];
             for(vector<int> one_exchange:exchange_color_list){
                 int rank1 = one_exchange[0];
                 int rank2 = one_exchange[1];
                 this->exchangeRange((*retval)["strategy"]["strategy"],rank1,rank2,one_node);
+                this->exchangeRange((*retval)["evs"],rank1,rank2,one_node);
 
             }
         }

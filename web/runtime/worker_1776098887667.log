@@ -1,0 +1,76 @@
+EXEC FROM FILE
+<<<START SOLVING>>>
+Using 8 threads
+Iter: 0
+player 0 exploitability 65.8428
+player 1 exploitability 16.022
+Total exploitability 81.8648 precent
+-------------------
+Iter: 11
+player 0 exploitability 19.6426
+player 1 exploitability -4.3968
+Total exploitability 15.2458 precent
+time used:  1.218  second.
+-------------------
+Iter: 21
+player 0 exploitability 16.3692
+player 1 exploitability -7.44719
+Total exploitability 8.92204 precent
+time used:  2.418  second.
+-------------------
+Iter: 31
+player 0 exploitability 14.1626
+player 1 exploitability -9.77165
+Total exploitability 4.39098 precent
+time used:  3.63  second.
+-------------------
+Iter: 41
+player 0 exploitability 13.2711
+player 1 exploitability -10.7193
+Total exploitability 2.55183 precent
+time used:  4.835  second.
+-------------------
+Iter: 51
+player 0 exploitability 12.7944
+player 1 exploitability -11.1137
+Total exploitability 1.68076 precent
+time used:  6.046  second.
+-------------------
+Iter: 61
+player 0 exploitability 12.484
+player 1 exploitability -11.2818
+Total exploitability 1.20222 precent
+time used:  7.419  second.
+-------------------
+Iter: 71
+player 0 exploitability 12.3083
+player 1 exploitability -11.3883
+Total exploitability 0.920016 precent
+time used:  9.057  second.
+-------------------
+Iter: 81
+player 0 exploitability 12.231
+player 1 exploitability -11.4202
+Total exploitability 0.810833 precent
+time used:  10.845  second.
+-------------------
+Iter: 91
+player 0 exploitability 12.1814
+player 1 exploitability -11.4934
+Total exploitability 0.688019 precent
+time used:  12.638  second.
+-------------------
+Iter: 101
+player 0 exploitability 12.1053
+player 1 exploitability -11.5687
+Total exploitability 0.536556 precent
+time used:  14.464  second.
+-------------------
+Iter: 111
+player 0 exploitability 12.0818
+player 1 exploitability -11.5924
+Total exploitability 0.489395 precent
+time used:  16.213  second.
+collecting statics
+statics collected
+save success

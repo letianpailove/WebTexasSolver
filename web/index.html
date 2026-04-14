@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -10,35 +10,36 @@
 <div class="win">
   <div class="title">
     <div class="title-inner">
-      <span class="title-eyebrow">TexasSolver Console</span>
+      <span class="title-eyebrow">TexasSolver</span>
       <span class="title-main">基于 CFR 的德州扑克求解器</span>
     </div>
   </div>
-  <div class="menu"><span class="active">求解工作</span><span>策略浏览</span><span>参数配置</span></div>
-  <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
+  <!-- <div class="menu"><span class="active">求解工作</span><span>策略浏览</span><span>参数配置</span></div> -->
+  
 
   <div class="main">
     <section class="left">
       <div class="hero">
         <div class="hero-main">
-          <div class="hero-kicker">CFR Solver Workspace</div>
-          <h1 class="hero-title">从手牌范围到策略结果的完整求解工作流</h1>
+          <!-- <div class="hero-kicker">CFR Solver Workspace</div> -->
+          <h1 class="hero-title">求解器控制台</h1>
           <p class="hero-desc">先设置公共牌与双方范围，再配置下注树和求解参数。页面按真实操作顺序组织，适合快速试算、构建树和查看结果</p>
-          <div class="hero-tags">
+          <!-- <div class="hero-tags">
             <span class="tag">范围编辑</span>
             <span class="tag">树构建</span>
             <span class="tag">内存估算</span>
             <span class="tag">策略浏览</span>
             <span class="tag">EV 图表</span>
-          </div>
+          </div> -->
           <div class="hero-actions">
             <button class="btn primary" id="startBtn">开始求解</button>
             <button class="btn" id="buildTreeBtn">构建树</button>
             <button class="btn ghost" id="estimateBtn">估算内存</button>
             <button class="btn" id="loadResultBtn">显示结果</button>
           </div>
+          <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
         </div>
-        <div class="hero-side">
+        <!-- <div class="hero-side">
           <div class="quick-card">
             <h4>推荐顺序</h4>
             <p>1. 先设置公共牌与范围 2. 配置下注参数 3. 估算内存后再开始求解 4. 求解完成后查看策略和EV</p>
@@ -47,7 +48,7 @@
             <h4>当前工作区</h4>
             <p>左侧负责输入与求解配置，右侧集中显示运行状态、命令文件、日志和结果预览，减少来回滚动</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="section">
@@ -206,7 +207,7 @@
     </section>
 
     <aside class="right">
-      <div class="sidebar-card">
+      <div class="sidebar-card" id="runFileCard" hidden>
         <div class="sec-title">运行文件</div>
         <div class="btnrow"><button class="btn" id="exportCmdBtn">导出当前参数</button></div>
         <div class="filebox" id="filebox">output_result.json
@@ -220,10 +221,10 @@ tmp_log.txt</div>
         <div class="btnrow"><button class="btn" id="clearLogBtn">清空日志</button></div>
       </div>
 
-      <div class="sidebar-card">
+      <!-- <div class="sidebar-card">
         <div class="sec-title">结果预览</div>
         <div class="result" id="result">结果预览将在这里显示</div>
-      </div>
+      </div> -->
     </aside>
   </div>
 </div>

@@ -183,7 +183,10 @@ export async function refreshStatus() {
     const r = await fetch("/api/status");
     const s = await r.json();
     setStatus(s.running ? "求解中..." : "空闲", true);
-    elements.filebox.textContent = [s.output_file || "output_result.json", s.command_file || "commands.txt", "tmp_log.txt"].join("\n");
+
+    if (elements.filebox) {
+      elements.filebox.textContent = [s.output_file || "output_result.json", s.command_file || "commands.txt", "tmp_log.txt"].join("\n");
+    }
     elements.startBtn.disabled = !!s.running;
     document.getElementById("stopBtn").disabled = !s.running;
     document.getElementById("buildTreeBtn").disabled = !!s.running;

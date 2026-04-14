@@ -673,7 +673,7 @@ export async function selectResultNode(id) {
 export async function loadResult() {
   const r = await fetch("/api/result-full");
   if (!r.ok) {
-    elements.resultEl.textContent = `读取结果失败: ${await r.text()}`;
+    elements.logEl.textContent = `读取结果失败: ${await r.text()}`;
     return;
   }
   const raw = await r.json();

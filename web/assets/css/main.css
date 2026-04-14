@@ -98,13 +98,14 @@ body {
 }
 
 .status {
-  margin: 18px 24px 0;
+  /* margin: 18px 24px 0;
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--line);
   background: #fcfdff;
-  box-shadow: var(--shadow-1);
-  font-size: 13px;
+  box-shadow: var(--shadow-1); */
+  padding-top: 10px;
+  font-size: 16px;
 }
 
 .status .ok,

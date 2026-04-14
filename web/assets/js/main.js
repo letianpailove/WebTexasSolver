@@ -44,7 +44,7 @@ async function buildTree() {
       setStatus(d.error || "构建失败", false);
       return;
     }
-    setStatus("构件中...", true);
+    setStatus("构建中...", true);
     startPolling();
   } finally {
     setTimeout(() => { btn.disabled = false; }, 1000);
@@ -62,16 +62,16 @@ async function estimateMemory() {
     });
     const d = await r.json();
     if (!d.ok) {
-      elements.resultEl.textContent = d.error || "估算启动失败";
+      elements.logEl.textContent = d.error || "估算启动失败";
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 1200));
     const mem = await fetch("/api/memory").then((x) => x.json());
     if (!mem.ok) {
-      elements.resultEl.textContent = mem.error || "未读取到估算结果";
+      elements.logEl.textContent = mem.error || "未读取到估算结果";
       return;
     }
-    elements.resultEl.textContent = `估算结果文件: ${mem.path}\n内存浮点单元: ${mem.memory_float}\n约 ${mem.memory_mb.toFixed(1)} MB\n约 ${mem.memory_gb.toFixed(3)} GB`;
+    elements.logEl.textContent = `估算结果文件: ${mem.path}\n内存浮点单元: ${mem.memory_float}\n约 ${mem.memory_mb.toFixed(1)} MB\n约 ${mem.memory_gb.toFixed(3)} GB`;
   } finally {
     btn.disabled = false;
   }

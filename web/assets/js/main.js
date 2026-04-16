@@ -8,6 +8,7 @@ import {
   refreshStatus,
   renderPreviewGrid,
   setStatus,
+  showGlobalMessage,
   startPolling,
 } from "./core.js";
 import { fillTurnRiverCards, loadResult, renderResultTree, selectResultNode } from "./result-viewer.js";
@@ -23,10 +24,12 @@ async function startSolve() {
   const d = await r.json();
   if (!d.ok) {
     setStatus(d.error || "启动失败", false);
+    showGlobalMessage(d.error || "启动失败", "error");
     elements.startBtn.disabled = false;
     return;
   }
   setStatus("求解中...", true);
+  showGlobalMessage("已开始求解", "success");
   startPolling();
 }
 
@@ -42,9 +45,11 @@ async function buildTree() {
     const d = await r.json();
     if (!d.ok) {
       setStatus(d.error || "构建失败", false);
+      showGlobalMessage(d.error || "构建树失败", "error");
       return;
     }
     setStatus("构建中...", true);
+    showGlobalMessage("已开始构建树", "success");
     startPolling();
   } finally {
     setTimeout(() => { btn.disabled = false; }, 1000);
@@ -63,15 +68,18 @@ async function estimateMemory() {
     const d = await r.json();
     if (!d.ok) {
       elements.logEl.textContent = d.error || "估算启动失败";
+      showGlobalMessage(d.error || "估算内存失败", "error");
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 1200));
     const mem = await fetch("/api/memory").then((x) => x.json());
     if (!mem.ok) {
       elements.logEl.textContent = mem.error || "未读取到估算结果";
+      showGlobalMessage(mem.error || "未读取到估算结果", "error");
       return;
     }
     elements.logEl.textContent = `估算结果文件: ${mem.path}\n内存浮点单元: ${mem.memory_float}\n约 ${mem.memory_mb.toFixed(1)} MB\n约 ${mem.memory_gb.toFixed(3)} GB`;
+    showGlobalMessage(`内存估算完成：约 ${mem.memory_mb.toFixed(1)} MB`, "success");
   } finally {
     btn.disabled = false;
   }
@@ -81,9 +89,11 @@ async function stopSolve() {
   const d = await r.json();
   if (!d.ok) {
     setStatus(d.error || "停止失败", false);
+    showGlobalMessage(d.error || "停止求解失败", "error");
     return;
   }
   setStatus("已停止", false);
+  showGlobalMessage("已停止求解", "info");
   await refreshStatus();
 }
 
@@ -126,12 +136,25 @@ function bindTurnRiverSelectors() {
 function bindMainEvents() {
   elements.startBtn.onclick = startSolve;
   document.getElementById("stopBtn").onclick = stopSolve;
-  document.getElementById("copyIpToOopBtn").onclick = copyIpToOop;
+  document.getElementById("copyIpToOopBtn").onclick = () => {
+    copyIpToOop();
+    showGlobalMessage("已复制 IP 配置到 OOP", "info");
+  };
   document.getElementById("buildTreeBtn").onclick = buildTree;
   document.getElementById("estimateBtn").onclick = estimateMemory;
-  document.getElementById("refreshBtn").onclick = async () => { await refreshStatus(); await refreshLog(); };
-  document.getElementById("loadResultBtn").onclick = loadResult;
-  document.getElementById("clearLogBtn").onclick = () => { elements.logEl.textContent = ""; };
+  document.getElementById("refreshBtn").onclick = async () => {
+    await refreshStatus();
+    await refreshLog();
+    showGlobalMessage("状态与日志已刷新", "info");
+  };
+  document.getElementById("loadResultBtn").onclick = async () => {
+    await loadResult();
+    showGlobalMessage("结果加载请求已执行", "info");
+  };
+  document.getElementById("clearLogBtn").onclick = () => {
+    elements.logEl.textContent = "";
+    showGlobalMessage("日志已清空", "info");
+  };
   // document.getElementById("exportCmdBtn").onclick = () => {
   //   elements.resultEl.textContent = "点击“开始求解”后，系统会在web/runtime 目录生成命令文件和结果文件";
   // };

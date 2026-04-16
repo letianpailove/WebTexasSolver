@@ -1,4 +1,6 @@
 import { elements, state } from "./dom.js";
+let globalToastEl = null;
+let globalToastTimer = null;
 
 export function getRanks() {
   return document.getElementById("mode").value === "shortdeck"
@@ -174,6 +176,23 @@ export function payload() {
 
 export function setStatus(text, ok) {
   elements.statusEl.innerHTML = `后端状态：<span class="${ok ? "ok" : "bad"}">${text}</span>`;
+}
+
+export function showGlobalMessage(text, type = "info", duration = 2400) {
+  if (!globalToastEl) {
+    globalToastEl = document.createElement("div");
+    globalToastEl.id = "globalToast";
+    globalToastEl.className = "global-toast";
+    document.body.appendChild(globalToastEl);
+  }
+
+  globalToastEl.textContent = String(text || "");
+  globalToastEl.className = `global-toast show ${type}`;
+
+  if (globalToastTimer) clearTimeout(globalToastTimer);
+  globalToastTimer = setTimeout(() => {
+    if (globalToastEl) globalToastEl.classList.remove("show");
+  }, duration);
 }
 
 export async function refreshStatus() {

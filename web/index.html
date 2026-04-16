@@ -19,45 +19,11 @@
 
   <div class="main">
     <section class="left">
-      <div class="hero">
-        <div class="hero-main">
-          <!-- <div class="hero-kicker">CFR Solver Workspace</div> -->
-          <h1 class="hero-title">求解器控制台</h1>
-          <p class="hero-desc">先设置公共牌与双方范围，再配置下注树和求解参数。页面按真实操作顺序组织，适合快速试算、构建树和查看结果</p>
-          <!-- <div class="hero-tags">
-            <span class="tag">范围编辑</span>
-            <span class="tag">树构建</span>
-            <span class="tag">内存估算</span>
-            <span class="tag">策略浏览</span>
-            <span class="tag">EV 图表</span>
-          </div> -->
-          <div class="hero-actions">
-            <button class="btn primary" id="startBtn">开始求解</button>
-            <button class="btn" id="buildTreeBtn">构建树</button>
-            <button class="btn ghost" id="estimateBtn">估算内存</button>
-            <button class="btn" id="loadResultBtn">显示结果</button>
-            <button class="btn" id="stopBtn">停止求解</button>
-            <button class="btn" id="refreshBtn">刷新状态</button>
-          </div>
-          <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
-        </div>
-        <!-- <div class="hero-side">
-          <div class="quick-card">
-            <h4>推荐顺序</h4>
-            <p>1. 先设置公共牌与范围 2. 配置下注参数 3. 估算内存后再开始求解 4. 求解完成后查看策略和EV</p>
-          </div>
-          <div class="quick-card">
-            <h4>当前工作区</h4>
-            <p>左侧负责输入与求解配置，右侧集中显示运行状态、命令文件、日志和结果预览，减少来回滚动</p>
-          </div>
-        </div> -->
-      </div>
-
       <div class="section">
         <div class="section-head">
           <div>
-            <h2 class="section-title">基础参数配置</h2>
-            <p class="section-subtitle">先确定公共牌、双方范围和基础参数，这是后续构建博弈树的输入基础。</p>
+            <h2 class="section-title">基础参数与范围</h2>
+            <p class="section-subtitle">先设置公共牌、双方范围和基本参数，为下注树和求解准备输入。</p>
           </div>
         </div>
 
@@ -80,7 +46,7 @@
 
         <div class="panel">
           <div class="panel-header">
-            <h3 class="panel-title">牌面与范围</h3>
+            <h3 class="panel-title">牌面与范围文本</h3>
           </div>
           <div class="range-editor">
             <div class="range-block">
@@ -88,7 +54,7 @@
               <textarea class="txt" id="board">Q♠,J♥,2♥</textarea>
               <div class="compact-actions">
                 <button class="btn" id="btnSelectBoard">选择公共牌</button>
-                <span class="helper-text">格式例子：Q♠,J♥,2♥</span>
+                <span class="helper-text">格式示例：Q♠,J♥,2♥</span>
               </div>
             </div>
             <div class="section-grid-two">
@@ -104,31 +70,7 @@
           </div>
         </div>
 
-      <div class="section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">下注树配置</h2>
-            <p class="section-subtitle">按位置和街次分别设置下注、加注、Donk 及全下选项，构建更贴近真实策略空间的博弈树</p>
-          </div>
-          <div class="compact-actions">
-            <button class="btn" id="copyIpToOopBtn">复制IP到OOP</button>
-          </div>
-        </div>
-
-        <div class="street">
-          <div class="panel item"><h4> flop IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_ip_allin" checked> 允许全下</label></div>
-          <div class="panel item"><h4> turn IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="turn_ip_allin" checked> 允许全下</label></div>
-          <div class="panel item"><h4> river IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_ip_raise" value="60 100"><div>%</div></div><label class="check"><input type="checkbox" id="river_ip_allin" checked> 允许全下</label></div>
-        </div>
-
-        <div class="street">
-          <div class="panel item"><h4> flop OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_oop_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_oop_allin" checked> 允许全下</label></div>
-          <div class="panel item"><h4> turn OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_oop_raise" value="60"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="turn_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="turn_oop_allin" checked> 允许全下</label></div>
-          <div class="panel item"><h4> river OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_oop_raise" value="60 100"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="river_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="river_oop_allin" checked> 允许全下</label></div>
-        </div>
-      </div>
-
-      <div class="meta-grid">
+        <div class="meta-grid">
           <div class="meta-card">
             <div class="k">底池</div>
             <input class="small" id="pot" value="50">
@@ -159,12 +101,35 @@
         </div>
       </div>
 
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">下注树配置</h2>
+            <p class="section-subtitle">按街次与位置配置下注尺度、加注尺度、Donk 与全下选项。</p>
+          </div>
+          <div class="compact-actions">
+            <button class="btn" id="copyIpToOopBtn">复制IP到OOP</button>
+          </div>
+        </div>
+
+        <div class="street">
+          <div class="panel item"><h4>flop IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_ip_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4>turn IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_ip_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="turn_ip_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4>river IP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_ip_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_ip_raise" value="60 100"><div>%</div></div><label class="check"><input type="checkbox" id="river_ip_allin" checked> 允许全下</label></div>
+        </div>
+
+        <div class="street">
+          <div class="panel item"><h4>flop OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="flop_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="flop_oop_raise" value="60"><div>%</div></div><label class="check"><input type="checkbox" id="flop_oop_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4>turn OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="turn_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="turn_oop_raise" value="60"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="turn_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="turn_oop_allin" checked> 允许全下</label></div>
+          <div class="panel item"><h4>river OOP</h4><div class="frow"><div>下注尺度:</div><input class="small" id="river_oop_bet" value="50"><div>%</div></div><div class="frow"><div>加注尺度:</div><input class="small" id="river_oop_raise" value="60 100"><div>%</div></div><div class="frow"><div>Donk尺度:</div><input class="small" id="river_oop_donk" value="50"><div>%</div></div><label class="check"><input type="checkbox" id="river_oop_allin" checked> 允许全下</label></div>
+        </div>
+      </div>
 
       <div class="section">
         <div class="section-head">
           <div>
-            <h2 class="section-title">求解参数与执行</h2>
-            <p class="section-subtitle">先估算内存，再运行求解。求解结束后可直接打开结果浏览器查看策略、范围和EV值</p>
+            <h2 class="section-title">求解参数</h2>
+            <p class="section-subtitle">配置迭代和日志参数，随后在右侧运行面板执行构建、估算和求解。</p>
           </div>
         </div>
         <div class="panel">
@@ -187,25 +152,40 @@
             </div>
           </div>
           <div class="solver-toolbar">
-            <div class="helper-text">构建树用于检查配置有效性，估算内存用于预判资源消耗，开始求解后可在右侧日志区查看进度</div>
+            <div class="helper-text">建议顺序：先构建树并估算内存，再开始求解；运行进度与输出日志见右侧面板。</div>
           </div>
         </div>
       </div>
     </section>
 
     <aside class="right">
+      <div class="sidebar-card run-panel">
+        <div class="sec-title">运行面板</div>
+        <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
+        <div class="run-actions">
+          <button class="btn primary" id="startBtn">开始求解</button>
+          <button class="btn" id="stopBtn">停止求解</button>
+          <button class="btn" id="buildTreeBtn">构建树</button>
+          <button class="btn ghost" id="estimateBtn">估算内存</button>
+          <button class="btn" id="loadResultBtn">显示结果</button>
+          <button class="btn" id="refreshBtn">刷新状态</button>
+        </div>
+      </div>
+
+      <div class="sidebar-card log-panel">
+        <div class="sec-title">运行日志</div>
+        <div class="log" id="log"></div>
+        <div class="btnrow">
+          <button class="btn" id="clearLogBtn">清空日志</button>
+        </div>
+      </div>
+
       <div class="sidebar-card" id="runFileCard" hidden>
         <div class="sec-title">运行文件</div>
         <div class="btnrow"><button class="btn" id="exportCmdBtn">导出当前参数</button></div>
         <div class="filebox" id="filebox">output_result.json
 TexasSolverGui
 tmp_log.txt</div>
-      </div>
-
-      <div class="sidebar-card">
-        <div class="sec-title">运行日志</div>
-        <div class="log" id="log"></div>
-        <div class="btnrow"><button class="btn" id="clearLogBtn">清空日志</button></div>
       </div>
 
       <!-- <div class="sidebar-card">

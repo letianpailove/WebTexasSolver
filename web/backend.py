@@ -53,6 +53,8 @@ DEFAULTS = {
     "river_oop_allin": True,
 }
 
+MAX_RESULT_FULL_BYTES = 200 * 1024 * 1024
+
 
 @dataclass
 class JobState:
@@ -618,22 +620,27 @@ class SolverService:
         if not raw_node:
             return {"ok": False, "error": "node not found"}
 
-        if raw_node.get("node_type") == "chance_node":
+        chance_hops = 0
+        while isinstance(raw_node, dict) and raw_node.get("node_type") == "chance_node":
             deals = raw_node.get("dealcards") if isinstance(raw_node.get("dealcards"), dict) else None
-            chosen = self._get_deal_card_by_chance_index(board_cards, turn_card, river_card, 0)
-            raw_node = (deals.get(chosen) if deals and chosen else None) or self._first_object_value(deals)
-            if not isinstance(raw_node, dict):
-                return {"ok": False, "error": "chance node has no resolved child"}
+            chosen = self._get_deal_card_by_chance_index(board_cards, turn_card, river_card, chance_hops)
+            next_node = (deals.get(chosen) if deals and chosen else None) or self._first_object_value(deals)
+            if not isinstance(next_node, dict):
+                return {"ok": False, "error": "selected chance node has no dumped action child; increase dump_rounds and solve again"}
+            raw_node = next_node
+            chance_hops += 1
+            if chance_hops >= 4:
+                break
 
         if raw_node.get("node_type") != "action_node":
-            return {"ok": False, "error": "selected node is not an action node"}
+            return {"ok": False, "error": "selected node is not an action node; if this is a chance branch, increase dump_rounds and solve again"}
 
         evs_map = raw_node.get("evs")
         strategy_block = raw_node.get("strategy") if isinstance(raw_node.get("strategy"), dict) else {}
         strategy_map = strategy_block.get("strategy") if isinstance(strategy_block.get("strategy"), dict) else {}
         actions = strategy_block.get("actions") if isinstance(strategy_block.get("actions"), list) else raw_node.get("actions") or []
         if not isinstance(evs_map, dict):
-            return {"ok": False, "error": "result file does not contain evs; rebuild solver output and solve again"}
+            return {"ok": False, "error": "result file does not contain evs; rebuild api.dll, then solve again to regenerate output"}
 
         ip_reach, oop_reach = self._compute_reach_for_node(raw_root, trace, mode, range_ip, range_oop, board_cards, turn_card, river_card)
         current_player = int(raw_node.get("player", 0))
@@ -677,23 +684,26 @@ class SolverService:
             if reach > 0:
                 for idx in range(len(actions)):
                     entry["avg_strategy"][idx] += probs[idx] * reach
-                    entry["action_evs"][idx] += probs[idx] * evs[idx] * reach
+                    entry["action_evs"][idx] += evs[idx] * reach
 
         rough_strategy: list[dict[str, Any]] = []
         for idx, action in enumerate(actions):
             combo_sum = 0.0
             avg_strategy_sum = 0.0
+            range_sum = 0.0
             weighted_action_ev = 0.0
             for entry in matrix.values():
                 combo_sum += sum((combo["range"] or 0.0) * (combo["probs"][idx] if idx < len(combo["probs"]) else 0.0) for combo in entry["combos"])
                 avg_strategy_sum += entry["avg_strategy"][idx]
+                entry_range_sum = sum((combo["range"] or 0.0) for combo in entry["combos"])
+                range_sum += entry_range_sum
                 weighted_action_ev += entry["action_evs"][idx]
             rough_strategy.append(
                 {
                     "action": action,
                     "combo": combo_sum,
                     "avg_strategy": avg_strategy_sum,
-                    "action_ev": (weighted_action_ev / combo_sum) if combo_sum > 0 else 0.0,
+                    "action_ev": (weighted_action_ev / range_sum) if range_sum > 0 else 0.0,
                 }
             )
 
@@ -702,11 +712,9 @@ class SolverService:
             combos.sort(key=lambda x: x["combo_ev"], reverse=True)
             range_sum = sum(max(0.0, float(combo["range"])) for combo in combos)
             for idx in range(len(actions)):
-                strategy_mass = sum((combo["range"] or 0.0) * combo["probs"][idx] for combo in combos)
                 if range_sum > 0:
                     entry["avg_strategy"][idx] /= range_sum
-                if strategy_mass > 0:
-                    entry["action_evs"][idx] /= strategy_mass
+                    entry["action_evs"][idx] /= range_sum
 
         return {
             "ok": True,
@@ -776,6 +784,21 @@ def make_handler(service: SolverService):
                 p = Path(output_file)
                 if not p.exists():
                     return self._send_json(404, {"ok": False, "error": "result not generated yet"})
+                file_size = p.stat().st_size
+                if file_size > MAX_RESULT_FULL_BYTES:
+                    size_mb = file_size / 1024 / 1024
+                    limit_mb = MAX_RESULT_FULL_BYTES / 1024 / 1024
+                    return self._send_json(
+                        413,
+                        {
+                            "ok": False,
+                            "error": (
+                                f"result file is too large to open in web viewer "
+                                f"({size_mb:.1f} MB > {limit_mb:.0f} MB). "
+                                "Lower dump_rounds (recommended <= 3) and solve again."
+                            ),
+                        },
+                    )
                 return self._send_bytes(200, p.read_bytes(), "application/json; charset=utf-8")
             if parsed.path == "/api/memory":
                 return self._send_json(200, service.read_memory())

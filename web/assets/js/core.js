@@ -149,8 +149,6 @@ export function payload() {
     allin_threshold: Number(document.getElementById("allin_threshold").value),
     raise_limit: Number(document.getElementById("raise_limit").value),
     use_isomorphism: document.getElementById("use_iso").checked ? 1 : 0,
-    use_halffloats: Number(document.getElementById("use_halffloats").value),
-    dump_rounds: Number(document.getElementById("dump_rounds").value),
     flop_ip_bet: document.getElementById("flop_ip_bet").value.trim(),
     flop_ip_raise: document.getElementById("flop_ip_raise").value.trim(),
     flop_ip_allin: document.getElementById("flop_ip_allin").checked,

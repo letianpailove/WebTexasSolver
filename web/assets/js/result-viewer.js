@@ -673,7 +673,14 @@ export async function selectResultNode(id) {
 export async function loadResult() {
   const r = await fetch("/api/result-full");
   if (!r.ok) {
-    elements.logEl.textContent = `读取结果失败: ${await r.text()}`;
+    let msg = "";
+    try {
+      const body = await r.json();
+      msg = body?.error || JSON.stringify(body);
+    } catch {
+      msg = await r.text();
+    }
+    elements.logEl.textContent = `读取结果失败: ${msg}`;
     return;
   }
   const raw = await r.json();

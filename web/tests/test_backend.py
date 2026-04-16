@@ -92,8 +92,8 @@ class BackendCommandFileTest(unittest.TestCase):
         self.assertEqual(len(aks["combos"]), 2)
         self.assertAlmostEqual(aks["combos"][0]["combo_ev"], 3.0)
         self.assertAlmostEqual(aks["combos"][1]["combo_ev"], 2.0)
-        self.assertAlmostEqual(aks["action_evs"][0], 2 / 3)
-        self.assertAlmostEqual(aks["action_evs"][1], 3.6)
+        self.assertAlmostEqual(aks["action_evs"][0], 0.5)
+        self.assertAlmostEqual(aks["action_evs"][1], 3.5)
 
     def test_read_log_matches_original_chinese_style_and_finish_hint(self):
         base = Path(__file__).resolve().parents[1]
@@ -161,6 +161,51 @@ class BackendCommandFileTest(unittest.TestCase):
         self.assertEqual(text, "构建游戏树中..\n构建游戏树完成\n")
         self.assertNotIn("EXEC FROM FILE", text)
         self.assertNotIn("求解结束.", text)
+
+    def test_get_node_ev_missing_evs_shows_actionable_hint(self):
+        base = Path(__file__).resolve().parents[1]
+        svc = SolverService(base_dir=base)
+        sample = {
+            "node_type": "action_node",
+            "player": 0,
+            "actions": ["CHECK", "BET 50"],
+            "strategy": {
+                "actions": ["CHECK", "BET 50"],
+                "strategy": {
+                    "AsKs": [0.5, 0.5],
+                },
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out = Path(tmpdir) / "result.json"
+            out.write_text(__import__("json").dumps(sample), encoding="utf-8")
+            svc.job.output_file = str(out)
+            result = svc.get_node_ev({"trace": []})
+
+        self.assertFalse(result["ok"])
+        self.assertIn("does not contain evs", result["error"])
+        self.assertIn("api.dll", result["error"])
+
+    def test_get_node_ev_chance_node_without_dumped_action_shows_hint(self):
+        base = Path(__file__).resolve().parents[1]
+        svc = SolverService(base_dir=base)
+        sample = {
+            "node_type": "chance_node",
+            "dealcards": {
+                "2c": {
+                    "node_type": "chance_node",
+                    "deal_number": 0,
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out = Path(tmpdir) / "result.json"
+            out.write_text(__import__("json").dumps(sample), encoding="utf-8")
+            svc.job.output_file = str(out)
+            result = svc.get_node_ev({"trace": [], "board": ["Qd", "Jh", "2h"], "turn_card": "2c"})
+
+        self.assertFalse(result["ok"])
+        self.assertIn("dump_rounds", result["error"])
 
 
 if __name__ == "__main__":

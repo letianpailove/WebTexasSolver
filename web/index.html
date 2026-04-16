@@ -36,6 +36,8 @@
             <button class="btn" id="buildTreeBtn">构建树</button>
             <button class="btn ghost" id="estimateBtn">估算内存</button>
             <button class="btn" id="loadResultBtn">显示结果</button>
+            <button class="btn" id="stopBtn">停止求解</button>
+            <button class="btn" id="refreshBtn">刷新状态</button>
           </div>
           <div class="status" id="status">后端状态：<span class="bad">检查中...</span></div>
         </div>
@@ -63,25 +65,22 @@
           <div class="panel">
             <div class="panel-header">
               <h3 class="panel-title">IP 范围</h3>
-              <span class="panel-note">点击网格或直接编辑文本</span>
             </div>
             <div class="gridwrap"><div class="matrix" id="grid1"></div></div>
-            <div class="btnrow"><button class="btn" id="btnSelectIp">选择IP</button></div>
+            <div class="btnrow"><button class="btn" id="btnSelectIp">选择IP范围</button></div>
           </div>
           <div class="panel">
             <div class="panel-header">
               <h3 class="panel-title">OOP 范围</h3>
-              <span class="panel-note">支持权重和文本导入</span>
             </div>
             <div class="gridwrap"><div class="matrix" id="grid2"></div></div>
-            <div class="btnrow"><button class="btn" id="btnSelectOop">选择OOP</button></div>
+            <div class="btnrow"><button class="btn" id="btnSelectOop">选择OOP范围</button></div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-header">
             <h3 class="panel-title">牌面与范围</h3>
-            <span class="panel-note">建议先用选择器粗配，再在文本中微调</span>
           </div>
           <div class="range-editor">
             <div class="range-block">
@@ -186,21 +185,9 @@
               <label>日志间隔</label>
               <input class="small" id="print_interval" value="10">
             </div>
-            <div class="field">
-              <label>内存优化</label>
-              <select class="sel" id="use_halffloats"><option value="0">关闭</option><option value="1">3/4精度</option><option value="2">1/2精度</option></select>
-            </div>
-            <div class="field">
-              <label>导出轮次</label>
-              <input class="small" id="dump_rounds" value="2">
-            </div>
           </div>
           <div class="solver-toolbar">
             <div class="helper-text">构建树用于检查配置有效性，估算内存用于预判资源消耗，开始求解后可在右侧日志区查看进度</div>
-            <div class="compact-actions">
-              <button class="btn" id="stopBtn">停止求解</button>
-              <button class="btn" id="refreshBtn">刷新状态</button>
-            </div>
           </div>
         </div>
       </div>
